@@ -1,0 +1,42 @@
+# First install dependencies:
+# pip install rembg onnxruntime pillow
+
+import os
+from rembg import remove
+from PIL import Image
+import io
+
+def remove_background_batch(input_folder, output_folder):
+    # Create output folder if it doesn't exist
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Supported image extensions
+    supported_extensions = ('.png', '.jpg', '.jpeg', '.webp')
+
+    # Loop through files in the input folder
+    for filename in os.listdir(input_folder):
+        if filename.lower().endswith(supported_extensions):
+            input_path = os.path.join(input_folder, filename)
+            output_path = os.path.join(output_folder, filename)
+
+            try:
+                # Read image
+                with open(input_path, 'rb') as input_file:
+                    input_data = input_file.read()
+
+                # Remove background
+                output_data = remove(input_data)
+
+                # Convert to Image and save
+                output_image = Image.open(io.BytesIO(output_data))
+                output_image.save(output_path)
+
+                print(f"✅ {filename} processed successfully.")
+            except Exception as e:
+                print(f"❌ Error processing {filename}: {e}")
+
+# --- Provide your folders here ---
+input_folder = r"C:\Users\abhin\OneDrive\Pictures\branding"     # Change this to your input folder
+output_folder = r"C:\Users\abhin\OneDrive\Pictures\branding\transparent"       # Change this to your output folder
+
+remove_background_batch(input_folder, output_folder)
